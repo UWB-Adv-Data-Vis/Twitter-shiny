@@ -424,7 +424,7 @@ summary {
 </div>
 <div id="instructions" class="section level1">
 <h1>Instructions</h1>
-<p>Make sure to write out the code to get in the habit of understanding the grammar of the code. If you need help, remember there are lots of resources including:</p>
+<p>Make sure to write out the code to get in the habit of understanding the grammar of the code. Do not copy directly. The power of learning code is the creative avenues it unlocks. If you need help, remember there are lots of resources including:</p>
 <ul>
 <li>Discord</li>
 <li>Canvas Community Q&amp;A</li>
@@ -456,7 +456,7 @@ devtools::install_github(&quot;hadley/emo&quot;)</code></pre>
 <h3>Introduction</h3>
 <p>Underneath the setup chunk, replace the text with the following header and text.</p>
 <p><code>## Introduction</code></p>
-<p><code>This R Markdown document is made interactive using Shiny to demonstate my abilities to make interactive data visualizations.</code></p>
+<p><code>This R Markdown document is made interactive using Shiny to demonstrate my abilities to make interactive data visualizations.</code></p>
 <p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
 <div id="load-data-chunk" class="section level3">
@@ -504,13 +504,13 @@ user_timeline  &lt;- get_timeline(&quot;RLadiesSeattle&quot;, n = 900)
 <h3>inputPanel</h3>
 <p>Under the first sub-header, <code>Recent Rstats tweets</code> we will add some text to describe what the visual will show.</p>
 <p><code>The plot below shows time series of #rstats tweets and can be filtered by language.</code></p>
-<p>Next, create a new chunk, titled <code>{r tweets, echo=FALSE}</code>. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add, an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.</p>
+<p>Next, create a new chunk, titled <code>{r tweets, echo=FALSE}</code>. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.</p>
 <pre><code>{r tweets, echo=FALSE}
 inputPanel(
   selectInput(&quot;tweetlang&quot;, label = &quot;Language of tweets:&quot;,
               choices = unique(tweets$lang), selected = &quot;en&quot;, multiple = TRUE)
 )</code></pre>
-<p>The input panel allows uses to select from the choices from a menu of all options found in the twitter data sample. AS a default, English <code>&quot;en&quot;</code> is selected. The label prompts users what to select and stores the value as an object that can be called by <code>input$tweetlang</code></p>
+<p>The input panel allows users to select from the choices from a menu of all options found in the twitter data sample. As a default, English <code>&quot;en&quot;</code> is selected. The label prompts users what to select and stores the value as an object that can be called by <code>input$tweetlang</code></p>
 <p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 <p>Next, try to run the document to see if you can use the input to find different languages by abbreviation.</p>
 </div>
@@ -547,7 +547,7 @@ inputPanel(
 renderPlot({
   ts_plot(tweets %&gt;% filter(lang %in% input$tweetlang) , by = &quot;hours&quot;, col = &quot;blue&quot;)  +
     labs(x = NULL, y = NULL,
-       title = &quot;Frequency of tweets from containing #Rstats&quot;,
+       title = &quot;Frequency of tweets containing #Rstats&quot;,
        subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
        caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
     theme_minimal()
@@ -599,7 +599,7 @@ renderPlot({
   ts_plot(user_timeline %&gt;% filter(source %in% input$tweetsource), by = &quot;months&quot;, col = &quot;blue&quot;) +
     labs(x = NULL, y = NULL,
        title = &quot;Frequency of tweets from @RLadiesSeattle&quot;,
-       subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
+       subtitle = paste0(format(min(user_timeline$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(user_timeline$created_at),&quot;%d %B %Y&quot;)),
        caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
     theme_minimal()
 })</code></pre>

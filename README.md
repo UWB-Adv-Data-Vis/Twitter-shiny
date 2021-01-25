@@ -128,7 +128,7 @@ Under the first sub-header, `Recent Rstats tweets` we will add some text to desc
 
 `The plot below shows time series of #rstats tweets and can be filtered by language.`
 
-Next, create a new chunk, titled `{r tweets, echo=FALSE}`. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add, an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.
+Next, create a new chunk, titled `{r tweets, echo=FALSE}`. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.
 
 ```
 {r tweets, echo=FALSE}
@@ -138,7 +138,7 @@ inputPanel(
 )
 ```
 
-The input panel allows uses to select from the choices from a menu of all options found in the twitter data sample. AS a default, English `"en"` is selected. The label prompts users what to select and stores the value as an object that can be called by `input$tweetlang` 
+The input panel allows users to select from the choices from a menu of all options found in the twitter data sample. As a default, English `"en"` is selected. The label prompts users what to select and stores the value as an object that can be called by `input$tweetlang` 
 
 Save the file, write a commit message and ***commit***.
 
@@ -185,7 +185,7 @@ inputPanel(
 renderPlot({
   ts_plot(tweets %>% filter(lang %in% input$tweetlang) , by = "hours", col = "blue")  +
     labs(x = NULL, y = NULL,
-       title = "Frequency of tweets from containing #Rstats",
+       title = "Frequency of tweets containing #Rstats",
        subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
        caption = "Data collected from Twitter's REST API via rtweet") + 
     theme_minimal()
