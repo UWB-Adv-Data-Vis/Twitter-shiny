@@ -416,25 +416,27 @@ summary {
 <div id="twitter-shiny" class="section level1">
 <h1>Twitter-shiny</h1>
 <p>For this assignment, you will learn to use data from twitter to develop a dashboard that has multiple interactive data visualizations.</p>
-<p>For references to using R markdown with Shiny, I recommend the rstudio website <a href="https://shiny.rstudio.com/articles/interactive-docs.html">Introduction to interactive documents</a>. For a deeper dive into Shiny’s capabilities, you can also watch a full 2.5 hour <a href="https://shiny.rstudio.com/tutorial/">video tutorial</a> on app development.</p>
+<p>For references to using R markdown with Shiny, I recommend the rstudio website <a href="https://shiny.rstudio.com/articles/interactive-docs.html">Introduction to interactive documents</a>. For a deeper dive into Shiny’s capabilities, you can also watch a full 2.5 hour <a href="https://shiny.rstudio.com/tutorial/">video tutorial</a> or app development or the full module <a href="http://rmarkdown.rstudio.com/authoring_shiny.html">Interactive Documents</a>.</p>
 <p>You may also be interested in the <a href="https://shiny.rstudio.com/articles/rm-cheatsheet.html">R Markdown cheat sheet</a>.</p>
 </div>
 <div id="sources" class="section level1">
 <h1>Sources</h1>
-<p>This assignment was inspired by an article on Medium called <a href="https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d"><em>Exploring tweets in R</em></a> by <a href="https://medium.com/@traffordDataLab">Trafford Data lab</a>. Additional resources were gathered from <a href="https://www.infoworld.com/article/3516150/create-a-shiny-app-to-search-twitter-with-rtweet-and-r.html"><em>Create a Shiny app to search Twitter with rtweet and R</em></a> by <a href="https://www.infoworld.com/author/Sharon-Machlis/">Sharon Machlis</a>.</p>
+<p>This assignment was inspired by an article on Medium called <a href="https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d">Exploring tweets in R</a> by <a href="https://medium.com/@traffordDataLab">Trafford Data lab</a>. Additional resources were gathered from <a href="https://www.infoworld.com/article/3516150/create-a-shiny-app-to-search-twitter-with-rtweet-and-r.html">Create a Shiny app to search Twitter with rtweet and R</a> by <a href="https://www.infoworld.com/author/Sharon-Machlis/">Sharon Machlis</a>.</p>
 </div>
 <div id="instructions" class="section level1">
 <h1>Instructions</h1>
 <div id="creating-a-rmd-file-for-shiny" class="section level2">
 <h2>Creating a Rmd file for Shiny</h2>
-<p>To begin, load a Shiny document by selecting <strong>New File</strong> and then selecting <strong>R Markdown…</strong>. When prompted select <strong>Shiny</strong> and select <strong>Shiny document</strong>. Title this document <strong>twitter-shiny</strong> and then save the <code>.Rmd</code> file in the assignment folder. You will also find a new R script titled <code>twitter-shiny.Rmd</code>.</p>
+<p>To begin, load a Shiny document by selecting <strong>New File</strong> and then selecting <strong>R Markdown…</strong>. When prompted select <strong>Shiny</strong> and select <strong>Shiny document</strong>. Title this document <strong>twitter-shiny</strong>, add your name as author and then save the <code>.Rmd</code> file in the assignment folder. You will also find a new R script titled <code>twitter-shiny.Rmd</code>.</p>
 <p>Open the file and then use the <strong>Run Document</strong> button to load the interactive data visualization.</p>
 <p>You should be able to see two input widgets that allow you to alter the histogram being displayed. Play with these features and read the full document. By the end of this assignment you should be able to make a simple widget for some twitter data.</p>
-<p>At this point, save the file and then commit with a message.</p>
+<p>At this point, save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
 <div id="loading-twitter-data" class="section level2">
 <h2>Loading twitter data</h2>
 <p>For this assignment, you will have the option of authorizing a twitter account through <code>rtweet</code> to gather real-time data or use pre-loaded data to build your dashboard. Optional: For real-time updates , you may consider obtaining developer permission from Twitter to use their <a href="https://developer.twitter.com/en/docs/twitter-api">API</a> directly and with large data queries.</p>
+<div id="setup-chunk" class="section level3">
+<h3>Setup chunk</h3>
 <p>We will update the library to use some of the unique libraries that will help us to work with twitter data. Update the setup chunk to load packages as shown below.</p>
 <pre><code>{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -442,6 +444,42 @@ library(&#39;rtweet&#39;) ; library(&#39;tidyverse&#39;) ; library(&#39;syuzhet&
 <p>You may not have these packages installed, so you will want to use the following code in the console to get the packages.</p>
 <pre><code>install.packages(c(&#39;tidyverse&#39;,&#39;rtweet&#39;,&#39;tidytext&#39;,&#39;syuzhet&#39;, &#39;devtools&#39;, &#39;wordcloud&#39;))
 devtools::install_github(&quot;hadley/emo&quot;)</code></pre>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+</div>
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p>Underneath the setup chunk, replace the text with the following header and text.</p>
+<p><code>## Introduction</code></p>
+<blockquote>
+<p>This R Markdown document is made interactive using Shiny to demonstate my abilities to make interactive data visualizations.</p>
+</blockquote>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+</div>
+<div id="load-data-chunk" class="section level3">
+<h3>Load data chunk</h3>
+<p>Create a new chunk under your replaced text called <code>{r load data, include = FALSE}</code></p>
+<p>Inside this chunk, load the twitter data of tweets containing the #rstats hashtag and those sent by the <span class="citation">@RLadiesSeattle</span> account. You have two options:</p>
+<ol style="list-style-type: decimal">
+<li><em>If and only if</em> you have a twitter account and feel conformable giving permission to rstats2twitter’s application to share your data then use the following code in the load data chunk. If you wish to visualize data of a different hashtag or account, you can do so with another term. Note that rtweet is limited to up to 18000 entries every 15 minutes, and only a few days. Our search filters language and excludes retweets and replies</li>
+</ol>
+<pre><code>tweets &lt;- search_tweets(q = &quot;#rstats&quot;, 
+                        n = 9000,
+                        include_rts = FALSE,
+                        `-filter` = &quot;replies&quot;,
+                        lang = &quot;en&quot;)
+                        
+user_timeline  &lt;- get_timeline(&quot;RLadiesSeattle&quot;, n = 9000)
+</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.</li>
+</ol>
+<pre><code>load(.Rdata)</code></pre>
+<p>After successfully loading the stored data, you should be able to see a <code>tweets</code> data table in the environment tab.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+</div>
 </div>
 </div>
 
