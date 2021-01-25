@@ -415,16 +415,22 @@ summary {
 
 <div id="twitter-shiny" class="section level1">
 <h1>Twitter-shiny</h1>
+<p>Author: Caleb Trujillo</p>
 <p>For this assignment, you will learn to use data from twitter to develop a dashboard that has multiple interactive data visualizations.</p>
 <p>For references to using R markdown with Shiny, I recommend the rstudio website <a href="https://shiny.rstudio.com/articles/interactive-docs.html">Introduction to interactive documents</a>. For a deeper dive into Shiny’s capabilities, you can also watch a full 2.5 hour <a href="https://shiny.rstudio.com/tutorial/">video tutorial</a> or app development or the full module <a href="http://rmarkdown.rstudio.com/authoring_shiny.html">Interactive Documents</a>.</p>
 <p>You may also be interested in the <a href="https://shiny.rstudio.com/articles/rm-cheatsheet.html">R Markdown cheat sheet</a>.</p>
-</div>
-<div id="sources" class="section level1">
-<h1>Sources</h1>
+<p>##Sources</p>
 <p>This assignment was inspired by an article on Medium called <a href="https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d">Exploring tweets in R</a> by <a href="https://medium.com/@traffordDataLab">Trafford Data lab</a>. Additional resources were gathered from <a href="https://www.infoworld.com/article/3516150/create-a-shiny-app-to-search-twitter-with-rtweet-and-r.html">Create a Shiny app to search Twitter with rtweet and R</a> by <a href="https://www.infoworld.com/author/Sharon-Machlis/">Sharon Machlis</a>.</p>
 </div>
 <div id="instructions" class="section level1">
 <h1>Instructions</h1>
+<p>Make sure to write out the code to get in the habit of understanding the grammar of the code. If you need help, remember there are lots of resources including:</p>
+<ul>
+<li>Discord</li>
+<li>Canvas Community Q&amp;A</li>
+<li>The internet</li>
+<li>Prof. Trujillo</li>
+</ul>
 <div id="creating-a-rmd-file-for-shiny" class="section level2">
 <h2>Creating a Rmd file for Shiny</h2>
 <p>To begin, load a Shiny document by selecting <strong>New File</strong> and then selecting <strong>R Markdown…</strong>. When prompted select <strong>Shiny</strong> and select <strong>Shiny document</strong>. Title this document <strong>twitter-shiny</strong>, add your name as author and then save the <code>.Rmd</code> file in the assignment folder. You will also find a new R script titled <code>twitter-shiny.Rmd</code>.</p>
@@ -437,12 +443,12 @@ summary {
 <p>For this assignment, you will have the option of authorizing a twitter account through <code>rtweet</code> to gather real-time data or use pre-loaded data to build your dashboard. Optional: For real-time updates , you may consider obtaining developer permission from Twitter to use their <a href="https://developer.twitter.com/en/docs/twitter-api">API</a> directly and with large data queries.</p>
 <div id="setup-chunk" class="section level3">
 <h3>Setup chunk</h3>
-<p>We will update the library to use some of the unique libraries that will help us to work with twitter data. Update the setup chunk to load packages as shown below.</p>
+<p>We will update the library to use some of the unique libraries that will help us to work with twitter data and manipulating text data. Update the setup chunk to load packages as shown below.</p>
 <pre><code>{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(&#39;rtweet&#39;) ; library(&#39;tidyverse&#39;) ; library(&#39;syuzhet&#39;) ;library(&#39;emo&#39;) ; library(&#39;wordcloud&#39;)</code></pre>
-<p>You may not have these packages installed, so you will want to use the following code in the console to get the packages.</p>
-<pre><code>install.packages(c(&#39;tidyverse&#39;,&#39;rtweet&#39;,&#39;tidytext&#39;,&#39;syuzhet&#39;, &#39;devtools&#39;, &#39;wordcloud&#39;))
+library(&#39;rtweet&#39;) ; library(&#39;tidyverse&#39;) ; library(&#39;syuzhet&#39;) ;library(&#39;emo&#39;) ; library(&#39;wordcloud&#39;) ; library(&#39;DT&#39;) ; library(&#39;tidytext&#39;)</code></pre>
+<p>You may not have these packages installed, so you will want to use the following code in the console to get the packages needed for this assignment.</p>
+<pre><code>install.packages(c(&#39;tidyverse&#39;,&#39;rtweet&#39;,&#39;tidytext&#39;,&#39;syuzhet&#39;, &#39;devtools&#39;, &#39;wordcloud&#39;, &#39;DT&#39;))
 devtools::install_github(&quot;hadley/emo&quot;)</code></pre>
 <p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
@@ -450,9 +456,7 @@ devtools::install_github(&quot;hadley/emo&quot;)</code></pre>
 <h3>Introduction</h3>
 <p>Underneath the setup chunk, replace the text with the following header and text.</p>
 <p><code>## Introduction</code></p>
-<blockquote>
-<p>This R Markdown document is made interactive using Shiny to demonstate my abilities to make interactive data visualizations.</p>
-</blockquote>
+<p><code>This R Markdown document is made interactive using Shiny to demonstate my abilities to make interactive data visualizations.</code></p>
 <p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
 <div id="load-data-chunk" class="section level3">
@@ -463,23 +467,228 @@ devtools::install_github(&quot;hadley/emo&quot;)</code></pre>
 <li><em>If and only if</em> you have a twitter account and feel conformable giving permission to rstats2twitter’s application to share your data then use the following code in the load data chunk. If you wish to visualize data of a different hashtag or account, you can do so with another term. Note that rtweet is limited to up to 18000 entries every 15 minutes, and only a few days. Our search filters language and excludes retweets and replies</li>
 </ol>
 <pre><code>tweets &lt;- search_tweets(q = &quot;#rstats&quot;, 
-                        n = 9000,
+                        n = 16000,
                         include_rts = FALSE,
-                        `-filter` = &quot;replies&quot;,
-                        lang = &quot;en&quot;)
+                        `-filter` = &quot;replies&quot;) #%&gt;%
+  #mutate(favorite_count = as.numeric(favorite_count), 
+         #retweet_count = as.numeric(retweet_count))
+         
                         
-user_timeline  &lt;- get_timeline(&quot;RLadiesSeattle&quot;, n = 9000)
+user_timeline  &lt;- get_timeline(&quot;RLadiesSeattle&quot;, n = 900)
 </code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.</li>
 </ol>
-<pre><code>load(.Rdata)</code></pre>
+<pre><code>load(&quot;data.Rdata&quot;)</code></pre>
+<p>If this doesn’t work you may have to specify the working directory.</p>
+<pre><code>load(&quot;~/workspace/Twitter-shiny/data.RData&quot;)</code></pre>
 <p>After successfully loading the stored data, you should be able to see a <code>tweets</code> data table in the environment tab.</p>
 <p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
-<div id="section" class="section level3">
-<h3></h3>
+<div id="create-two-tabs-for-organizing-the-data." class="section level3">
+<h3>Create two tabs for organizing the data.</h3>
+<p>Clear the remaining text after your load data chunk so you have a blank space to add more.</p>
+<p>Add headers and subheaders as follows:</p>
+<pre><code>## Twitter data {.tabset}
+
+### Recent Rstats tweets
+
+### Tweets from @RLadiesSeattle</code></pre>
+<p>You may want to change the name of the headers if using a different hashtag or user that you want to display. The <code>{.tabset}</code> will enable your webpage to have the subordinate tabs as headers.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
 </div>
+</div>
+<div id="recent-rstats-tweets" class="section level2">
+<h2>Recent Rstats tweets</h2>
+<div id="inputpanel" class="section level3">
+<h3>inputPanel</h3>
+<p>Under the first sub-header, <code>Recent Rstats tweets</code> we will add some text to describe what the visual will show.</p>
+<p><code>The plot below shows time series of #rstats tweets and can be filtered by language.</code></p>
+<p>Next, create a new chunk, titled <code>{r tweets, echo=FALSE}</code>. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add, an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.</p>
+<pre><code>{r tweets, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetlang&quot;, label = &quot;Language of tweets:&quot;,
+              choices = unique(tweets$lang), selected = &quot;en&quot;, multiple = TRUE)
+)</code></pre>
+<p>The input panel allows uses to select from the choices from a menu of all options found in the twitter data sample. AS a default, English <code>&quot;en&quot;</code> is selected. The label prompts users what to select and stores the value as an object that can be called by <code>input$tweetlang</code></p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Next, try to run the document to see if you can use the input to find different languages by abbreviation.</p>
+</div>
+<div id="renderplot" class="section level3">
+<h3>renderPlot</h3>
+<p>Continue to work in the <code>tweets</code> chunk and add code to render a plot so your code looks as follows:</p>
+<pre><code>{r tweets, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetlang&quot;, label = &quot;Language of tweets:&quot;,
+              choices = unique(tweets$lang), selected = &quot;en&quot;, multiple = TRUE)
+)
+
+renderPlot({
+  ts_plot(tweets %&gt;% filter(lang %in% input$tweetlang) , by = &quot;hours&quot;, col = &quot;blue&quot;)  +
+    labs(x = NULL, y = NULL,
+       title = &quot;Frequency of tweets from containing #Rstats&quot;,
+       subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
+       caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
+    theme_minimal()
+})</code></pre>
+<p>The <code>renderPlot()</code> function will use the inputs to make a graph that can react to the information being changed. First specify that time-series plot function, <code>ts_plot</code> and use this to specify the data. Here we use piping <code>%&gt;%</code> and the <code>filter()</code> function so that only data that is include are the tweets that have a language, <code>lang</code>, in the list of selected inputs <code>tweetlang</code>, which we specified in the <code>inputPanel</code>. We can also add some additional features to make the plot look cleaner and have additional declarative information such as the title, source, and details.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Next, try to run the document to see if you can use the input to graph different languages.</p>
+</div>
+<div id="renderdatatable" class="section level3">
+<h3>renderDataTable</h3>
+<p>Continue to work in the <code>tweets</code> chunk and add code to render a data table so your code looks as follows:</p>
+<pre><code>{r tweets, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetlang&quot;, label = &quot;Language of tweets:&quot;,
+              choices = unique(tweets$lang), selected = &quot;en&quot;, multiple = TRUE)
+)
+
+renderPlot({
+  ts_plot(tweets %&gt;% filter(lang %in% input$tweetlang) , by = &quot;hours&quot;, col = &quot;blue&quot;)  +
+    labs(x = NULL, y = NULL,
+       title = &quot;Frequency of tweets from containing #Rstats&quot;,
+       subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
+       caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
+    theme_minimal()
+})
+
+renderDataTable({
+  tweets %&gt;% 
+    filter(lang %in% input$tweetlang) %&gt;% 
+    select(screen_name,text,lang,favorite_count,retweet_count)
+})</code></pre>
+<p>Here, we will add a data table to give details about the content of the tweets in our data set. For showing data in an interactive data format, we can add the <code>renderDataTable()</code> function to use filters and searches in a user friendly way. Like in the <code>renderPlot()</code> we can use piping,<code>%&gt;%</code>, and the filter with the input variable, <code>tweetlang</code>, so that the data contains only the languages specified by the user. Here the <code>select()</code> function specifies only a few of the 90 variables in the original data table.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Next, try to run the document with the <code>Run Document</code> button to see if you can use the input to alter the table to different languages.</p>
+</div>
+</div>
+<div id="tweets-from-rladiesseattle" class="section level2">
+<h2>Tweets from <span class="citation">@RLadiesSeattle</span></h2>
+<p>Next we will go to the next sub-header to create a new tab for us to build a data table:</p>
+<p><code>### Tweets from @RLadiesSeattle</code></p>
+<p>Add descriptive text such as:</p>
+<pre><code>The plots below show the top emojis used, a wordle of terms, and a time series of tweets by @RLadiesSeattle. 
+The time series can be plotted with different sources to see when different devices were used to tweet.</code></pre>
+<p>Then, add a sub-header:</p>
+<p><code>#### Time series plot of tweets</code></p>
+<p>Here we will add another chunk which we will call <code>user</code> with echo set to false, <code>{r user, echo=FALSE}</code>.</p>
+<p>For the user, we will have multiple data displays, but will gather one input for the sake of creating interactive plots.</p>
+<div id="device-inputpanel" class="section level3">
+<h3>Device inputPanel</h3>
+<p>In the user chunk, collect information using an <code>inputPanel</code> from the user with another multiple-select option. Instead of language, we will use the source of the tweet so we can see what device was used to write it.</p>
+<pre><code>{r user, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetsource&quot;, label = &quot;Source of tweets:&quot;,
+              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
+)</code></pre>
+<p>Like before, we have choices available based on what is present in the data set, and as a default, we will visualize all select sources with the ability of the user to select multiple and storing these as a variable <code>input$tweetsource</code> so that we can retrieve this for the plots below.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Click the <code>Run Document</code> button to see if the data input panel appears.</p>
+</div>
+<div id="user-tweets-renderplot" class="section level3">
+<h3>User tweets renderPlot</h3>
+<p>Continue to work in the <code>user</code> chunk and specify the plot as a time-series of the number of tweets over time. Since this user has fewer tweets, we can extend the time to months.</p>
+<pre><code>{r user, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetsource&quot;, label = &quot;Source of tweets:&quot;,
+              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
+)
+
+renderPlot({
+  ts_plot(user_timeline %&gt;% filter(source %in% input$tweetsource), by = &quot;months&quot;, col = &quot;blue&quot;) +
+    labs(x = NULL, y = NULL,
+       title = &quot;Frequency of tweets from @RLadiesSeattle&quot;,
+       subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
+       caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
+    theme_minimal()
+})</code></pre>
+<p>The <code>renderPlot()</code> function will use the inputs to make a reacting set of graphs. Time-series plot function, <code>ts_plot</code>, piping <code>%&gt;%</code> and the <code>filter()</code> function will make it so only data from our selected tweet source is collected via <code>source</code> and the list of selected inputs <code>tweetsource</code>, which we specified in the <code>inputPanel</code>. Like before, we can add features to make the plot cleaner.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Click the <code>Run Document</code> button to see if the data plot appears.</p>
+</div>
+<div id="user-tweets-renderdatatable" class="section level3">
+<h3>User tweets renderDataTable</h3>
+<p>Next we provide a table full of details that can be easily filtered using our input or user actions for more information. To do this, we continue to add to the <code>user</code> chunk.</p>
+<pre><code>{r user, echo=FALSE}
+inputPanel(
+  selectInput(&quot;tweetsource&quot;, label = &quot;Source of tweets:&quot;,
+              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
+)
+
+renderPlot({
+  ts_plot(user_timeline %&gt;% filter(source %in% input$tweetsource), by = &quot;months&quot;, col = &quot;blue&quot;) +
+    labs(x = NULL, y = NULL,
+       title = &quot;Frequency of tweets from @RLadiesSeattle&quot;,
+       subtitle = paste0(format(min(tweets$created_at), &quot;%d %B %Y&quot;), &quot; to &quot;, format(max(tweets$created_at),&quot;%d %B %Y&quot;)),
+       caption = &quot;Data collected from Twitter&#39;s REST API via rtweet&quot;) + 
+    theme_minimal()
+})
+
+renderDataTable({
+  user_timeline %&gt;% 
+    filter(source %in% input$tweetsource) %&gt;% 
+    select(text, favorite_count, retweet_count, source) %&gt;%
+    arrange(desc(retweet_count))
+})</code></pre>
+<p>Notice that this time we use the <code>user_timeline</code> data, use piping to filter to the input-selected sources, then select a few of the needed columns from the full data table, and then arrange these by the number of retweets in descending order.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Click the <code>Run Document</code> button to see if the data table of tweets appears.</p>
+</div>
+<div id="emojis-rendertable" class="section level3">
+<h3>Emojis renderTable</h3>
+<p>One way we can summarize the information from the tweets is by focusing on the most frequently used emojis! To begin this section, add a new sub-header, <code>#### Top emojis</code>, and then create a <code>renderTable()</code> funtion to take the information from the input and update the emoji table. This one will be a bit more complicated since each tweet can have multiple emojis and we are more interested in the total count. In this chunk, we will add the following code:</p>
+<pre><code>{r emoji, echo=FALSE}
+renderTable({
+  user_timeline %&gt;%
+  mutate(emoji = ji_extract_all(text)) %&gt;%
+  filter(source %in% input$tweetsource) %&gt;%
+  unnest(cols = c(emoji)) %&gt;%
+  count(emoji, sort = TRUE) %&gt;%
+  top_n(10)
+})</code></pre>
+<p>We again use the <code>user_timeline</code> with piping to:</p>
+<ul>
+<li>extract emojis from the text,</li>
+<li>filter based on the input-selected source,</li>
+<li>unpack the multiple instances of emojis,</li>
+<li>count the emojis</li>
+<li>list only the top ten most frequent.</li>
+</ul>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Click the <code>Run Document</code> to see if the table of emotes appears.</p>
+</div>
+<div id="wordle" class="section level3">
+<h3>Wordle</h3>
+<p>A wordle is one visualization that is often used as a novelty but can be great for summarizing impressions. We will make a world that will help summarize the tweets. Start by adding a sub-header to distinguish the section, <code>### Wordle: A graphic of frequently used words</code>.</p>
+<p>Next, create a chunk called <code>userwordle</code> and add a <code>renderPlot()</code> function.</p>
+<pre><code>{r userwordle , echo=FALSE}
+renderPlot({
+ words &lt;- user_timeline %&gt;%
+  mutate(text = str_remove_all(text, &quot;&amp;amp;|&amp;lt;|&amp;gt;&quot;),
+         text = str_remove_all(text, &quot;\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)&quot;),
+         text = str_remove_all(text, &quot;[^\x01-\x7F]&quot;)) %&gt;% 
+  unnest_tokens(word, text, token = &quot;tweets&quot;) %&gt;%
+  filter(!word %in% stop_words$word,
+         !word %in% str_remove_all(stop_words$word, &quot;&#39;&quot;),
+         str_detect(word, &quot;[a-z]&quot;),
+         !str_detect(word, &quot;^#&quot;),         
+         !str_detect(word, &quot;@\\S+&quot;)) %&gt;%
+  filter(source %in% input$tweetsource) %&gt;%
+  count(word, sort = TRUE)
+
+words %&gt;% 
+  with(wordcloud(word, n, random.order = FALSE, max.words = 100, colors = &quot;#F29545&quot;)) 
+})</code></pre>
+<p>This set of code is beyond the scope of what we are learning in data visualization, but it uses regular expressions to extract words that can be standardized for counting without pesky username handles or hashtags that might alter our count. Notice we still have a filter function that uses <code>input$tweetsource</code> to make the information reactive. Once the word data is stored as an object <code>words</code> it can be called up as a wordle using the <code>wordcloud()</code> function.</p>
+<p>Save the file, write a commit message and <strong><em>commit</em></strong>.</p>
+<p>Click the <code>Run Document</code> button to see if the wordle appears.</p>
+</div>
+</div>
+<div id="congratulations" class="section level2">
+<h2>Congratulations</h2>
+<p>Well done! You made an interactive data visualization using twitter data! We will discuss different ways to publish your work to the web but for now anyone who has your code can reproduce your visualizations!</p>
+<p>Look over your work, make sure you are ready to push your changes, and then use Git to <strong>Push</strong> to GitHub Classroom.</p>
 </div>
 </div>
 
