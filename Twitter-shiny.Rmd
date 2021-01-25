@@ -8,7 +8,7 @@ runtime: shiny
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT')
+library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT') ; library('tidytext')
 ```
 
 This R Markdown document is made interactive using Shiny. 
@@ -16,18 +16,13 @@ This R Markdown document is made interactive using Shiny.
 
 ```{r load data, eval = TRUE, include=FALSE}
 tweets <- search_tweets(q = "#rstats", 
-                        n = 100,
+                        n = 16000,
                         include_rts = FALSE,
-                        `-filter` = "replies") #%>%
-  #mutate(favorite_count = as.numeric(favorite_count), 
-         #retweet_count = as.numeric(retweet_count))
+                        `-filter` = "replies")
          
                         
 user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
 
-user_favs  <- get_favorites("RLadiesSeattle", n = 900)
-
-user_friends <- get_friends("RLadiesSeattle")
 ```
 
 ```{r load Rdata, eval = FALSE, include=FALSE}
@@ -37,7 +32,7 @@ load("~/workspace/Twitter-shiny/.RData")
 
 ### Recent Rstats tweets
 
-The plot below shows time series of #rstats tweets based upon county and favorite count.
+The plot below shows time series of #rstats tweets and can be filtered by language.
 
 ```{r tweets, echo=FALSE}
 inputPanel(
@@ -47,7 +42,12 @@ inputPanel(
 
 
 renderPlot({
-  ts_plot(tweets %>% filter(lang %in% input$tweetlang) , by = "hours", col = "blue")
+  ts_plot(tweets %>% filter(lang %in% input$tweetlang) , by = "hours", col = "blue")  +
+    labs(x = NULL, y = NULL,
+       title = "Frequency of tweets from containing #Rstats",
+       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") + 
+    theme_minimal()
 })
 
 renderDataTable({
@@ -58,6 +58,67 @@ renderDataTable({
 ```
 
 
-### Tweets from RL
+### Tweets from @RLadiesSeattle
 
+The plots below show the top emojis used, a wordle of terms, and a time series of tweets by @RLadiesSeattle. The time series can be plotted with different sources to see when different devices were used to tweet.
 
+#### Time series plot of tweets
+
+```{r user, echo=FALSE}
+inputPanel(
+  selectInput("tweetsource", label = "Language of tweets:",
+              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
+)
+
+renderPlot({
+  ts_plot(user_timeline %>% filter(source %in% input$tweetsource), by = "months", col = "blue") +
+    labs(x = NULL, y = NULL,
+       title = "Frequency of tweets from @RLadiesSeattle",
+       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") + 
+    theme_minimal()
+})
+
+renderDataTable({
+  user_timeline %>% 
+    filter(source %in% input$tweetsource) %>% 
+    select(text, favorite_count, retweet_count, source) %>%
+    arrange(desc(retweet_count))
+})
+
+```
+
+#### Top emojis
+
+```{r emoji, echo=FALSE}
+renderTable({
+  user_timeline %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  filter(source %in% input$tweetsource) %>%
+  unnest(cols = c(emoji)) %>%
+  count(emoji, sort = TRUE) %>%
+  top_n(10)
+})
+```
+
+#### Wordle: A graphic of frequently used words.
+
+```{r userwordle , echo=FALSE}
+renderPlot({
+ words <- user_timeline %>%
+  mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
+         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
+         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
+  unnest_tokens(word, text, token = "tweets") %>%
+  filter(!word %in% stop_words$word,
+         !word %in% str_remove_all(stop_words$word, "'"),
+         str_detect(word, "[a-z]"),
+         !str_detect(word, "^#"),         
+         !str_detect(word, "@\\S+")) %>%
+  filter(source %in% input$tweetsource) %>%
+  count(word, sort = TRUE)
+
+words %>% 
+  with(wordcloud(word, n, random.order = FALSE, max.words = 100, colors = "#F29545")) 
+})
+```

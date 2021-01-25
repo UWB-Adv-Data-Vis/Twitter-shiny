@@ -36,7 +36,7 @@ We will update the library to use some of the unique libraries that will help us
 ```
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT')
+library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT') ; library('tidytext')
 ```
 
 You may not have these packages installed, so you will want to use the following code in the console to get the packages. 
@@ -70,8 +70,10 @@ Inside this chunk, load the twitter data of tweets containing the #rstats hashta
 tweets <- search_tweets(q = "#rstats", 
                         n = 16000,
                         include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en")
+                        `-filter` = "replies") #%>%
+  #mutate(favorite_count = as.numeric(favorite_count), 
+         #retweet_count = as.numeric(retweet_count))
+         
                         
 user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
 
@@ -80,8 +82,9 @@ user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
 2. If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.
 
 ```
-load(".Rdata"")
+load(".Rdata")
 ```
+If this doesn't work you may have to specify the working directory. 
 After successfully loading the stored data, you should be able to see a `tweets` data table in the environment tab. 
 
 Save the file, write a commit message and ***commit***.
