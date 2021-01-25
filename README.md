@@ -63,7 +63,7 @@ Underneath the setup chunk, replace the text with the following header and text.
 
 ```## Introduction```
 
-`This R Markdown document is made interactive using Shiny to demonstate my abilities to make interactive data visualizations. `
+`This R Markdown document is made interactive using Shiny to demonstrate my abilities to make interactive data visualizations. `
 
 Save the file, write a commit message and ***commit***.
 
