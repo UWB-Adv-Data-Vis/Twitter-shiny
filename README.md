@@ -256,7 +256,7 @@ renderPlot({
   ts_plot(user_timeline %>% filter(source %in% input$tweetsource), by = "months", col = "blue") +
     labs(x = NULL, y = NULL,
        title = "Frequency of tweets from @RLadiesSeattle",
-       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
+       subtitle = paste0(format(min(user_timeline$created_at), "%d %B %Y"), " to ", format(max(user_timeline$created_at),"%d %B %Y")),
        caption = "Data collected from Twitter's REST API via rtweet") + 
     theme_minimal()
 })
