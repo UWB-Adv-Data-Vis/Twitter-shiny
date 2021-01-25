@@ -82,7 +82,7 @@ user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
 2. If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.
 
 ```
-load(".Rdata")
+load("data.Rdata")
 ```
 If this doesn't work you may have to specify the working directory. 
 After successfully loading the stored data, you should be able to see a `tweets` data table in the environment tab. 
