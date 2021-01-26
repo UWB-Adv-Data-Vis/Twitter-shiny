@@ -336,7 +336,7 @@ Click the `Run Document` to see if the table of emotes appears.
 
 A wordle is one visualization that is often used as a novelty but can be great for summarizing impressions.
 We will make a world that will help summarize the tweets. 
-Start by adding a sub-header to distinguish the section, `### Wordle: A graphic of frequently used words`.
+Start by adding a sub-header to distinguish the section, `#### Wordle: A graphic of frequently used words`.
 
 Next, create a chunk called `userwordle` and add a `renderPlot()` function.
 
