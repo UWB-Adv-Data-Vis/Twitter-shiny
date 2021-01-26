@@ -9,7 +9,7 @@ For references to using R markdown with Shiny, I recommend the rstudio website [
 
 You may also be interested in the [R Markdown cheat sheet](https://shiny.rstudio.com/articles/rm-cheatsheet.html). 
 
-##Sources
+## Sources
 
 This assignment was inspired by an article on Medium called [Exploring tweets in R](https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d) by [Trafford Data lab](https://medium.com/@traffordDataLab). Additional resources were gathered from [Create a Shiny app to search Twitter with rtweet and R](https://www.infoworld.com/article/3516150/create-a-shiny-app-to-search-twitter-with-rtweet-and-r.html) by [Sharon Machlis](https://www.infoworld.com/author/Sharon-Machlis/).
 
