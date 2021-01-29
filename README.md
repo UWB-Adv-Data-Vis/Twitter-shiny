@@ -25,9 +25,9 @@ Make sure to write out the code to get in the habit of understanding the grammar
 
 ## Creating a Rmd file for Shiny
 
-To begin, load a Shiny document by selecting **New File** and then selecting **R Markdown...**. When prompted select **Shiny** and select **Shiny document**. Title this document **twitter-shiny**, add your name as author and then save the `.Rmd` file in the assignment folder. You will also find a new R script titled `twitter-shiny.Rmd`. 
+To begin, load a Shiny document by selecting *New File* and then selecting **R Markdown...**. When prompted select **Shiny** and select **Shiny document**. Title this document ***twitter-shiny***, add your name as author and then save the `.Rmd` file in the assignment folder. You will also find a new R script titled `twitter-shiny.Rmd`. 
 
-Open the file and then use the **Run Document** button to load the interactive data visualization.
+Open the file and then use the *Run Document* button to load the interactive data visualization.
 
 You should be able to see two input widgets that allow you to alter the histogram being displayed. Play with these features and read the full document. By the end of this assignment you should be able to make a simple widget for some twitter data.
 
@@ -104,7 +104,7 @@ Save the file, write a commit message and ***commit***.
 
 ### Create two tabs for organizing the data.
 
-Clear the remaining text after your load data chunk so you have a blank space to add more.
+After your load data chunks, clear the remaining text, headers, and code chunks so you can have a blank space to add more.
 
 Add headers and subheaders as follows:
 
@@ -142,7 +142,7 @@ The input panel allows users to select from the choices from a menu of all optio
 
 Save the file, write a commit message and ***commit***.
 
-Next, try to run the document to see if you can use the input to find different languages by abbreviation.
+Next, try to run the document using the *Run Document* button to see if you can use the input to find different languages by abbreviation.
 
 ### renderPlot
 
@@ -169,7 +169,7 @@ The `renderPlot()` function will use the inputs to make a graph that can react t
 
 Save the file, write a commit message and ***commit***.
 
-Next, try to run the document to see if you can use the input to graph different languages.
+Next, try to run the document using the *Run Document* button to see if you can use the input to graph different languages.
 
 ### renderDataTable
 
@@ -202,13 +202,13 @@ Here, we will add a data table to give details about the content of the tweets i
 
 Save the file, write a commit message and ***commit***.
 
-Next, try to run the document with the `Run Document` button to see if you can use the input to alter the table to different languages.
+Next, try to run the document with the *Run Document* button to see if you can use the input to alter the table to different languages.
 
 ## Tweets from @RLadiesSeattle
 
 Next we will go to the next sub-header to create a new tab for us to build a data table:
 
-``` ### Tweets from @RLadiesSeattle ```
+`### Tweets from @RLadiesSeattle `
 
 Add descriptive text such as:
 
@@ -239,7 +239,7 @@ Like before, we have choices available based on what is present in the data set,
 
 Save the file, write a commit message and ***commit***.
 
-Click the `Run Document` button to see if the data input panel appears.
+Click the *Run Document* button to see if the data input panel appears.
 
 ### User tweets renderPlot
 
@@ -266,7 +266,7 @@ we can add features to make the plot  cleaner.
 
 Save the file, write a commit message and ***commit***.
 
-Click the `Run Document` button to see if the data plot appears.
+Click the *Run Document* button to see if the data plot appears.
 
 
 ### User tweets renderDataTable
@@ -301,7 +301,7 @@ Notice that this time we use the `user_timeline` data, use piping to filter to t
 
 Save the file, write a commit message and ***commit***.
 
-Click the `Run Document` button to see if the data table of tweets appears.
+Click the *Run Document* button to see if the data table of tweets appears.
 
 ### Emojis renderTable
 
@@ -320,7 +320,7 @@ renderTable({
 })
 ```
 
-We again use the `user_timeline` with piping to:
+We again use the `user_timeline` data set as the object and add piping for functions to:
 
 - extract emojis from the text, 
 - filter based on the input-selected source, 
@@ -330,12 +330,13 @@ We again use the `user_timeline` with piping to:
 
 Save the file, write a commit message and ***commit***.
 
-Click the `Run Document` to see if the table of emotes appears.
+Click the *Run Document* button to see if the table of emoticons appears.
 
 ### Wordle
 
 A wordle is one visualization that is often used as a novelty but can be great for summarizing impressions.
 We will make a world that will help summarize the tweets. 
+
 Start by adding a sub-header to distinguish the section, `#### Wordle: A graphic of frequently used words`.
 
 Next, create a chunk called `userwordle` and add a `renderPlot()` function.
@@ -361,14 +362,14 @@ words %>%
 })
 ```
 
-This set of code is beyond the scope of what we are learning in data visualization, but it uses regular expressions to extract words that can be standardized for counting without pesky username handles or hashtags that might alter our count. Notice we still have a filter function that uses `input$tweetsource` to make the information reactive. Once the word data is stored as an object `words` it can be called up as a wordle using the `wordcloud()` function.
+This set of code is beyond the scope of what we are learning in data visualization, but it uses regular expressions, *regex*, to extract words that can be standardized for counting without pesky username handles or hashtags that might alter our count. Notice we still have a filter function that uses `input$tweetsource` to make the information reactive. Once the word data is stored as an object `words` it can be called up as a wordle using the `wordcloud()` function.
 
 Save the file, write a commit message and ***commit***.
 
-Click the `Run Document` button to see if the wordle appears.
+Click the *Run Document* button to see if the wordle appears.
 
 ## Congratulations
 
 Well done! You made an interactive data visualization using twitter data! We will discuss different ways to publish your work to the web but for now anyone who has your code can reproduce your visualizations!
 
-Look over your work, make sure you are ready to push your changes, and then use Git to **Push** to GitHub Classroom.
+Look over your work, make sure you are ready to push your changes, and then use Git to ***Push*** to GitHub Classroom.
