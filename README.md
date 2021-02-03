@@ -73,9 +73,19 @@ Create a new chunk under your replaced text called `{r load data, include = FALS
  
 Inside this chunk, load the twitter data of tweets containing the #rstats hashtag and those sent by the @RLadiesSeattle account. You have two options:
 
-1. *If and only if* you have a twitter account and feel conformable giving permission to rstats2twitter's application to share your data then use the following code in the load data chunk. If you wish to visualize data of a different hashtag or account, you can do so with another term. Note that rtweet is limited to up to 18000 entries every 15 minutes, and only a few days. Our search filters language and excludes retweets and replies
+1. If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.
 
 ```
+load('data.Rdata')
+```
+If this doesn't work you may have to specify the working directory. 
+```
+load(`~/workspace/Twitter-shiny/data.RData`)
+```
+2. *If and only if* you have a twitter account and feel conformable giving permission to rstats2twitter's application to share your data then use the following code in the load data chunk. If you wish to visualize data of a different hashtag or account, you can do so with another term. Note that rtweet is limited to up to 18000 entries every 15 minutes, and only a few days. Our search filters language and excludes retweets and replies. You should see a download bar as this function gathers tweets. The download may stop before reaching 100% if there are fewer tweets in the last 9 days than the amount specified by n, in this case, fewer than 16000 tweets. 
+
+```
+{r load data, include = FALSE} 
 tweets <- search_tweets(q = "#rstats", 
                         n = 16000,
                         include_rts = FALSE,
@@ -85,19 +95,9 @@ tweets <- search_tweets(q = "#rstats",
          
                         
 user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
-
 ```
 
-2. If you do not have twitter or do not wish to share data with rstats2twitter developers, then load the default twitter data made on this files creation.
 
-```
-load("data.Rdata")
-```
-If this doesn't work you may have to specify the working directory. 
-
-```
-load("~/workspace/Twitter-shiny/data.RData")
-```
 After successfully loading the stored data, you should be able to see a `tweets` data table in the environment tab. 
 
 Save the file, write a commit message and ***commit***.
@@ -310,7 +310,7 @@ To begin this section, add a new sub-header, `#### Top emojis`, and then create 
 
 ```
 {r emoji, echo=FALSE}
-renderTable({
+renderDataTable({
   user_timeline %>%
   mutate(emoji = ji_extract_all(text)) %>%
   filter(source %in% input$tweetsource) %>%
