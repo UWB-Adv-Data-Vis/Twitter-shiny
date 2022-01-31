@@ -33,6 +33,8 @@ You should be able to see two input widgets that allow you to alter the histogra
 
 At this point, save the file, write a commit message and ***commit***.
 
+Next delete the previous code so you can write your own, save the file, write a commit message and ***commit***.
+
 ## Loading twitter data
 
 For this assignment, you will have the option of authorizing a twitter account through `rtweet` to gather real-time data or use pre-loaded data to build your dashboard. 
