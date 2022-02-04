@@ -54,7 +54,6 @@ You may not have these packages installed, so you will want to use the following
 
 ```
 install.packages(c('tidyverse','rtweet','tidytext','syuzhet', 'devtools', 'wordcloud', 'DT'))
-devtools::install_github("hadley/emo")
 ```
 
 Save the file, write a commit message and ***commit***.
@@ -305,34 +304,6 @@ Save the file, write a commit message and ***commit***.
 
 Click the *Run Document* button to see if the data table of tweets appears.
 
-### Emojis renderTable
-
-One way we can summarize the information from the tweets is by focusing on the most frequently used emojis!
-To begin this section, add a new sub-header, `#### Top emojis`, and then create a `renderTable()` funtion to take the information from the input and update the emoji table. This one will be a bit more complicated since each tweet can have multiple emojis and we are more interested in the total count. In this chunk, we will add the following code:
-
-```
-{r emoji, echo=FALSE}
-renderDataTable({
-  user_timeline %>%
-  mutate(emoji = ji_extract_all(text)) %>%
-  filter(source %in% input$tweetsource) %>%
-  unnest(cols = c(emoji)) %>%
-  count(emoji, sort = TRUE) %>%
-  top_n(10)
-})
-```
-
-We again use the `user_timeline` data set as the object and add piping for functions to:
-
-- extract emojis from the text, 
-- filter based on the input-selected source, 
-- unpack the multiple instances of emojis,
-- count the emojis
-- list only the top ten most frequent.
-
-Save the file, write a commit message and ***commit***.
-
-Click the *Run Document* button to see if the table of emoticons appears.
 
 ### Wordle
 
