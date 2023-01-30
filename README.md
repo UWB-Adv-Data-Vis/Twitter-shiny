@@ -20,7 +20,7 @@ Make sure to write out the code to get in the habit of understanding the grammar
 - Discord
 - Canvas Community Q&A
 - The internet
-- Prof. Trujillo
+- Your professor
 
 ## Creating a Rmd file for Shiny
 
@@ -36,7 +36,7 @@ Next delete the previous code so you can write your own, save the file, write a 
 
 ## Loading twitter data
 
-For this assignment, you will have the option of authorizing a twitter account through `rtweet` to gather real-time data or use pre-loaded data to build your dashboard. 
+For this assignment, you will have the option of authorizing a twitter account through `rtweet` to gather real-time data or use pre-loaded data to build your dashboard. I provide sample twitter data in case you can't get rtweet to work.
 Optional: For real-time updates , you may consider obtaining developer permission from Twitter to use their [API](https://developer.twitter.com/en/docs/twitter-api) directly and with large data queries. 
 
 ### Setup chunk
@@ -46,7 +46,7 @@ We will update the library to use some of the unique libraries that will help us
 ```
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT') ; library('tidytext')
+library('rtweet') ; library('tidyverse') ; library('syuzhet') ; library('wordcloud') ; library('DT') ; library('tidytext')
 ```
 
 You may not have these packages installed, so you will want to use the following code in the console to get the packages needed for this assignment. 
@@ -213,7 +213,7 @@ Next we will go to the next sub-header to create a new tab for us to build a dat
 Add descriptive text such as:
 
 ```
-The plots below show the top emojis used, a wordle of terms, and a time series of tweets by @RLadiesSeattle. 
+The plots below show a wordle of terms, and a time series of tweets by @RLadiesSeattle. 
 The time series can be plotted with different sources to see when different devices were used to tweet.
 ```
 
