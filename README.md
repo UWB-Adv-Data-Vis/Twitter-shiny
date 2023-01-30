@@ -4,8 +4,7 @@ Author: Caleb Trujillo
 
 For this assignment, you will learn to use data from twitter to develop a dashboard that has multiple interactive data visualizations. 
 
-For references to using R markdown with Shiny, I recommend the rstudio website [Introduction to interactive documents](https://shiny.rstudio.com/articles/interactive-docs.html). For a deeper dive into Shiny's capabilities, you can also watch a full 2.5 hour [video tutorial](https://shiny.rstudio.com/tutorial/) or app development or the full module [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
-
+For references to using R markdown with Shiny, I recommend the rstudio website [Introduction to interactive documents](https://shiny.rstudio.com/articles/interactive-docs.html). For a deeper dive into Shiny's capabilities, you can also watch a full 2.5 hour [video tutorial](https://shiny.rstudio.com/tutorial/) on app development, the LinkedIn Learning Course [Building Data Apps with R and Shiny: Essential Training](https://www.linkedin.com/learning-admin/content/courses/772334?account=67682169) or the full module [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
 
 You may also be interested in the [R Markdown cheat sheet](https://shiny.rstudio.com/articles/rm-cheatsheet.html). 
 
