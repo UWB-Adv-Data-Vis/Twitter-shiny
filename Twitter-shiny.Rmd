@@ -8,7 +8,7 @@ runtime: shiny
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library('rtweet') ; library('tidyverse') ; library('syuzhet') ;library('emo') ; library('wordcloud') ; library('DT') ; library('tidytext')
+pacman::p_load(rtweet,syuzhet, tidyverse, DT, stringr, wordcloud, tidytext)
 ```
 
 This R Markdown document is made interactive using Shiny. 
