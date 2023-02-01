@@ -46,7 +46,7 @@ We will update the library to use some of the unique libraries that will help us
 ```
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library('rtweet') ; library('tidyverse') ; library('syuzhet') ; library('wordcloud') ; library('DT') ; library('tidytext')
+pacman::p_load(rtweet,syuzhet, tidyverse, DT, stringr, wordcloud, tidytext)
 ```
 
 You may not have these packages installed, so you will want to use the following code in the console to get the packages needed for this assignment. 
