@@ -9,12 +9,15 @@ runtime: shiny
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(rtweet,syuzhet, tidyverse, DT, stringr, wordcloud, tidytext)
+#remotes::install_github("ropensci/rtweet")
+#library(rtweet)
+#auth_setup_default()
 ```
 
 This R Markdown document is made interactive using Shiny. 
 
 
-```{r load data, eval = TRUE, include=FALSE}
+```{r load data, eval = FALSE, include=FALSE, skip = TRUE}
 tweets <- search_tweets(q = "#rstats", 
                         n = 16000,
                         include_rts = FALSE,
