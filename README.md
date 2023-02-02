@@ -23,7 +23,12 @@ This assignment was inspired by an article on Medium called [Exploring tweets in
 
 # Instructions
 
-Make sure to write out the code to get in the habit of understanding the grammar of the code. Do not copy directly. The power of learning code is the creative avenues it unlocks. If you need help, remember there are lots of resources including:
+Make sure to write out the code to get in the habit of understanding the grammar of the code. Do not copy directly. The power of learning code is the creative avenues it unlocks. 
+
+I've recorded a video in which I worked on an earlier version of this code in class. It can be found on YouTube:
+[https://youtu.be/U7jrdHFl6gA](https://youtu.be/U7jrdHFl6gA)
+
+If you need help, remember there are lots of resources including:
 
 - Discord
 - Canvas Community Q&A
