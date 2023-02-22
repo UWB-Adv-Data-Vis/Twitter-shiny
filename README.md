@@ -2,6 +2,15 @@
 
 Author: Caleb Trujillo
 
+## Learning Objectives
+By the end of this assignment you will have practiced:
+* Scripted programming to process and filter data, develop workflows, perform statistical analysis, and build a data dashboard
+* Applying data analytics principles and methods to work with and visualize authentic data.
+* Using industry-standard approaches for project management and code development
+* Designing engaging and informative visualizations using computational methods.
+* Disseminating visualizations and research results in a webpage format such as a data dashboard.
+
+## Introduction
 For this assignment, you will learn to use data from twitter to develop a dashboard that has multiple interactive data visualizations. 
 
 For references to using R markdown with Shiny, I recommend the rstudio website [Introduction to interactive documents](https://shiny.rstudio.com/articles/interactive-docs.html). For a deeper dive into Shiny's capabilities, you can also watch a full 2.5 hour [video tutorial](https://shiny.rstudio.com/tutorial/) on app development, the LinkedIn Learning Course [Building Data Apps with R and Shiny: Essential Training](https://www.linkedin.com/learning-admin/content/courses/772334?account=67682169) or the full module [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
@@ -12,10 +21,14 @@ You may also be interested in the [R Markdown cheat sheet](https://shiny.rstudio
 
 This assignment was inspired by an article on Medium called [Exploring tweets in R](https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d) by [Trafford Data lab](https://medium.com/@traffordDataLab). Additional resources were gathered from [Create a Shiny app to search Twitter with rtweet and R](https://www.infoworld.com/article/3516150/create-a-shiny-app-to-search-twitter-with-rtweet-and-r.html) by [Sharon Machlis](https://www.infoworld.com/author/Sharon-Machlis/).
 
-
 # Instructions
 
-Make sure to write out the code to get in the habit of understanding the grammar of the code. Do not copy directly. The power of learning code is the creative avenues it unlocks. If you need help, remember there are lots of resources including:
+Make sure to write out the code to get in the habit of understanding the grammar of the code. Do not copy directly. The power of learning code is the creative avenues it unlocks. 
+
+I've recorded a video in which I worked on an earlier version of this code in class. It can be found on YouTube:
+[https://youtu.be/U7jrdHFl6gA](https://youtu.be/U7jrdHFl6gA)
+
+If you need help, remember there are lots of resources including:
 
 - Discord
 - Canvas Community Q&A
