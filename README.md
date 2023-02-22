@@ -78,10 +78,13 @@ Inside this chunk, load the twitter data of tweets containing the #rstats hashta
 ```
 load('data.Rdata')
 ```
+
 If this doesn't work you may have to specify the working directory. 
+
 ```
 load(`~/workspace/Twitter-shiny/data.RData`)
 ```
+
 2. *If and only if* you have a twitter account and feel conformable giving permission to rstats2twitter's application to share your data then use the following code in the load data chunk. If you wish to visualize data of a different hashtag or account, you can do so with another term. Note that rtweet is limited to up to 18000 entries every 15 minutes, and only a few days. Our search filters language and excludes retweets and replies. You should see a download bar as this function gathers tweets. The download may stop before reaching 100% if there are fewer tweets in the last 9 days than the amount specified by n, in this case, fewer than 16000 tweets. 
 
 ```
@@ -96,7 +99,6 @@ tweets <- search_tweets(q = "#rstats",
                         
 user_timeline  <- get_timeline("RLadiesSeattle", n = 900)
 ```
-
 
 After successfully loading the stored data, you should be able to see a `tweets` data table in the environment tab. 
 
@@ -320,7 +322,7 @@ renderPlot({
   mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
          text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
          text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
-  unnest_tokens(word, text, token = "tweets") %>%
+  unnest_tokens(word, text) %>%
   filter(!word %in% stop_words$word,
          !word %in% str_remove_all(stop_words$word, "'"),
          str_detect(word, "[a-z]"),
