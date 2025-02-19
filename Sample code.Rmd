@@ -1,0 +1,82 @@
+---
+title: "IMDb Shiny"
+author: "Caleb Trujillo"
+date: "`r Sys.Date()`"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, stringr)
+```
+
+```{r load data, include=FALSE}
+title <- read_tsv('title.basics.tsv')
+ratings <- read_tsv('title.ratings.tsv')
+
+film <- title %>%
+  merge(ratings) %>%
+  filter(numVotes > 100)
+
+rm(ratings)
+rm(title)
+gc()
+```
+
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r type, echo=FALSE}
+inputPanel(
+
+  selectInput("filmtype", label = "Type of film:",
+              choices = unique(film$titleType), selected = "movie", multiple = TRUE),
+  dateRangeInput("range", label = "Date range:",
+                  start = yq("2020.1"), 
+                 # min = yq("1984"), 
+                 # max = yq("2009"), 
+                 # format = "yyyy",
+                 startview = "decade")
+  )
+
+renderPlot({
+  film %>% 
+    filter(titleType %in% input$filmtype, averageRating >=8, numVotes >=1000) %>%
+    ggplot(aes(x = startYear, y = averageRating, size = numVotes, color = titleType)) +
+    geom_point()+
+      labs(x = NULL, y = NULL,
+         title = "Ratings with an 8 or higher",
+         subtitle = paste0("Film type: ",input$filmtype,"."),
+         caption = "Source: IMDb") + 
+      theme_minimal()
+})
+```
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+

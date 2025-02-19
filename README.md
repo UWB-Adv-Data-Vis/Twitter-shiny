@@ -61,7 +61,7 @@ Insure that the `.gitignore` file contains the names of these files, so that git
 
 To begin, load a Shiny document by selecting *New File* and then selecting **R Markdown...**. 
 When prompted select **Shiny** and select **Shiny document**. 
-Title this document ***imdb-shiny***, add your name as author and then save the `.Rmd` file in the assignment folder. 
+Title this document ***IMDb Shiny***, add your name as author and then save the `.Rmd` file in the assignment folder. 
 You will also find a new R script titled `imdb-shiny.Rmd`. 
 
 Open the file and then use the *Run Document* button to load a sample the interactive data visualization.
@@ -73,11 +73,11 @@ At this point, save the file, write a commit message and ***commit***.
 
 Next delete the previous code so you can write your own, save the file, write a commit message and ***commit***.
 
-
-
 ### Setup chunk
 
-We will update the library to use some of the unique libraries that will help us to work with IMDb data and manipulating text data. Update the setup chunk to load packages as shown below.
+We will update the library to use some of the unique libraries that will help us to work with IMDb data and manipulating text data. 
+
+Update the setup chunk to load packages as shown below.
 
 ```
 {r setup, include=FALSE}
@@ -105,9 +105,22 @@ Save the file, write a commit message and ***commit***.
 
 Create a new chunk under your replaced text called `{r load data, include = FALSE}`
 
+Write commands to load the two data files using the `read_tsv()` commands that are stored as `titles` and `ratings` respectively.
 
+Next, merge these data sets and filter the sample to keep the films with more than 100 raters.
+Use the function merge, a convenient join function.
 
-After successfully loading the stored data, you should be able to see a `tweets` data table in the environment tab. 
+```
+film <- title %>%
+  merge(ratings) %>%
+  filter(numVotes > 100)
+```
+
+This will reduce the data set from 1.5 million entries to about 382,000.
+
+After successfully running the script to load the stored data, you should be able to see a `film` data table in the environment tab. 
+
+Add commands `rm(ratings,title)` and `gc()` to remove the large objects from your database and remove unused objects.
 
 Save the file, write a commit message and ***commit***.
 
@@ -120,65 +133,92 @@ Add headers and subheaders as follows:
 ```
 ## IMDb data {.tabset}
 
-### Recent Rstats tweets
+### Top movies over time
 
-### Tweets from @RLadiesSeattle
+### Ratings by genre
 ```
 
-You may want to change the name of the headers if using a different hashtag or user that you want to display.  The `{.tabset}` will enable your webpage to have the subordinate tabs as headers. 
+You may want to change the name of the headers if using a different hashtag or user that you want to display.  
+The `{.tabset}` will enable your webpage to have the subordinate tabs as headers. 
 
 Save the file, write a commit message and ***commit***.
 
-## Recent Rstats tweets
+## Top Movies
 
 ### inputPanel
 
-Under the first sub-header, `Recent Rstats tweets` we will add some text to describe what the visual will show.
+Under the first sub-header, `Top movies by year` we will add some text to describe what the visual will show.
 
-`The plot below shows time series of #rstats tweets and can be filtered by language.`
+`The plot below shows time series of movies with an average rating higher than an 8 by more than 1,000 raters.`
 
-Next, create a new chunk, titled `{r tweets, echo=FALSE}`. We will use this to add components of a shiny app to make the document interactive. Inside the chunk add an input panel which will allow you to collect information from your user. In this case we can ask the user to select the languages of tweets related to #rstats to include in the visual.
+Next, create a new chunk, titled `{r top movies, echo=FALSE}`. We will use this to add components of a shiny app to make the document interactive. 
+Inside the chunk add an input panel which will allow you to collect information from your user. 
+In this case we can ask the user to select a time frame of films to include in the visual.
 
 ```
-{r tweets, echo=FALSE}
+{r type, echo=FALSE}
 inputPanel(
-  selectInput("tweetlang", label = "Language of tweets:",
-              choices = unique(tweets$lang), selected = "en", multiple = TRUE)
+
+  selectInput("filmtype", label = "Type of film:",
+              choices = unique(film$titleType), selected = "movie", multiple = TRUE)
 )
 ```
 
-The input panel allows users to select from the choices from a menu of all options found in the IMDb data sample. As a default, English `"en"` is selected. The label prompts users what to select and stores the value as an object that can be called by `input$tweetlang` 
+The input panel allows users to select from the choices from a menu of all options found in the IMDb data sample. 
+As a default, movies `"movie"` is selected. The label prompts users what to select and stores the value as an object that can be called by `film$type` 
 
 Save the file, write a commit message and ***commit***.
 
-Next, try to run the document using the *Run Document* button to see if you can use the input to find different languages by abbreviation.
+Next, try to run the document using the *Run Document* button to see if you can use the input to find different film types.
 
 ### renderPlot
 
-Continue to work in the `tweets` chunk and add code to render a plot so your code looks as follows:
+The `renderPlot()` function will use the inputs to make a graph that can react to the information being changed. 
+First specify that time-series plot function with ggplot and pipe in the filtered data. 
+Here we use piping `%>%` and the `filter()` function. 
+The filter allows that only data that is include are the film that have a type, `titleType`, in the list of selected inputs `filmtype`, which we specified in the `inputPanel`.  
+We can also add some additional features to make the plot look cleaner and have additional declarative information such as the title, source, and details.
+
+Continue to work in the `type` chunk and add code to render a plot so your code looks as follows:
 
 ```
-{r tweets, echo=FALSE}
+````{r type, echo=FALSE}
 inputPanel(
-  selectInput("tweetlang", label = "Language of tweets:",
-              choices = unique(tweets$lang), selected = "en", multiple = TRUE)
+  selectInput("filmtype", label = "Type of film:",
+              choices = unique(film$titleType), selected = "movie", multiple = TRUE)
 )
 
 renderPlot({
-  ts_plot(tweets %>% filter(lang %in% input$tweetlang) , by = "hours", col = "blue")  +
-    labs(x = NULL, y = NULL,
-       title = "Frequency of tweets from containing #Rstats",
-       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
-       caption = "Data collected from IMDb's REST API via rtweet") + 
-    theme_minimal()
+  film %>% 
+    filter(titleType %in% input$filmtype, averageRating >=8, numVotes >=1000) %>%
+    ggplot(aes(x = startYear, y = averageRating, size = numVotes, color = titleType)) +
+    geom_point()+
+      labs(x = NULL, y = NULL,
+         title = "Ratings of `input$filmtype` with an 8 or higher",
+         subtitle = paste0("Movies: ",input$filmtype,"."),
+         caption = "Source: IMDb") + 
+      theme_minimal()
 })
+````
 ```
 
-The `renderPlot()` function will use the inputs to make a graph that can react to the information being changed. First specify that time-series plot function, `ts_plot` and use this to specify the data. Here we use piping `%>%` and the `filter()` function so that only data that is include are the tweets that have a language, `lang`, in the list of selected inputs `tweetlang`, which we specified in the `inputPanel`.  We can also add some additional features to make the plot look cleaner and have additional declarative information such as the title, source, and details.
+
 
 Save the file, write a commit message and ***commit***.
 
 Next, try to run the document using the *Run Document* button to see if you can use the input to graph different languages.
+
+
+### Add a slider bar for date.
+
+Lets repeat these same steps by adding a date input using a slider.
+This will help users by not overwhelming them too quickly.
+
+```dateRangeInput("range", label = "Date range:",
+                 start = 2010, min = min(film$startYear), max = (film$endYear), format = "yyyy", startview = "year")```
+                 
+                 
+
 
 ### renderDataTable
 
