@@ -36,7 +36,9 @@ This R Markdown document is made interactive using Shiny. Unlike the more tradit
 
 To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
 
-## Inputs and Outputs
+## Inputs and Outputs {.tabset}
+
+### header 2
 
 You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change. This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
 
@@ -94,3 +96,9 @@ renderPlot({
 })
 
 ```
+
+
+
+### Description
+
+Add text to describe, what you accomplished and why it matters. 

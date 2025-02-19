@@ -132,14 +132,13 @@ Save the file, write a commit message and ***commit***.
 
 After your load data chunks, clear the remaining text, headers, and code chunks so you can have a blank space to add more.
 
-Add headers and subheaders as follows:
+Add headers and a subheader as follows:
 
 ```
-## IMDb data {.tabset}
+## IMDb data{.tabset}
 
 ### Top movies over time
 
-### Ratings by genre
 ```
 
 You may want to change the name of the headers if using a different hashtag or user that you want to display.  
@@ -147,7 +146,7 @@ The `{.tabset}` will enable your webpage to have the subordinate tabs as headers
 
 Save the file, write a commit message and ***commit***.
 
-## Top Movies
+## Top Movies 
 
 ### inputPanel
 
@@ -332,149 +331,26 @@ This will provide a unique approach to splice to label the most popular films.
 Instead of using `numVotes`, this could easily be adapted to the `averageRating`.
 Notice that when the user replaces movies with video games in the selection, the labels contain video games.
 
-
 Save the file, write a commit message and ***commit***.
 
-##  Ratings by genre
+### Add descriptions and clean Up
 
-Continue working under the header `### Ratings by genre`.
-
-
-
-### renderDataTable
-
-Continue to work in the chunk and add code to render a data table so your code looks as follows:
+Add a second subheader. 
 
 ```
-{r tweets, echo=FALSE}
-inputPanel(
-  selectInput("tweetlang", label = "Language of tweets:",
-              choices = unique(tweets$lang), selected = "en", multiple = TRUE)
-)
-
-renderPlot({
-  ts_plot(tweets %>% filter(lang %in% input$tweetlang) , by = "hours", col = "blue")  +
-    labs(x = NULL, y = NULL,
-       title = "Frequency of tweets containing #Rstats",
-       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
-       caption = "Data collected from IMDb") + 
-    theme_minimal()
-})
-
-renderDataTable({
-  tweets %>% 
-    filter(lang %in% input$tweetlang) %>% 
-    select(screen_name,text,lang,favorite_count,retweet_count)
-})
+### Description
 ```
+Add text under this header to describe, what you accomplished and why it matters. 
 
-Here, we will add a data table to give details about the content of the tweets in our data set. For showing data in an interactive data format, we can add the `renderDataTable()` function to use filters and searches in a user friendly way. Like in the `renderPlot()` we can use piping,`%>%`, and the filter with the input variable, `tweetlang`, so that the data contains only the languages specified by the user. Here the `select()` function specifies only a few of the 90 variables in the original data table.
+Delete any remaining headers, text or code.
 
 Save the file, write a commit message and ***commit***.
-
-Next, try to run the document with the *Run Document* button to see if you can use the input to alter the table to different languages.
-
-## Tweets from
-
-Next we will go to the next sub-header to create a new tab for us to build a data table:
-
-`### Tweets from @RLadiesSeattle `
-
-Add descriptive text such as:
-
-```
-The plots below show a wordle of terms, and a time series of tweets by @RLadiesSeattle. 
-The time series can be plotted with different sources to see when different devices were used to tweet.
-```
-
-Then, add a sub-header:
-
-`#### Time series plot of tweets`
-
-Here we will add another chunk which we will call `genres` with echo set to false, `{r genres, echo=FALSE}`.
-
-For the user, we will display genres to select and will gather one input for the sake of creating interactive plots.
-
-### Device inputPanel
-
-In the genres chunk, collect information using an `inputPanel` from the user with a select option. Instead of media by `titleType`, we will use `genres` column. 
-```
-{r user, echo=FALSE}
-inputPanel(
-  selectInput("genre", label = ":",
-              choices = unique(unlist(str_split(film$genres,","))), 
-              selected = "Horror", multiple = FALSE)
-)
-```
-Like before, we have choices available based on what is present in the data set, and as a default, we will visualize all select sources with the ability of the user to select multiple and storing these as a variable `input$tweetsource` so that we can retrieve this for the plots below. 
-
-Save the file, write a commit message and ***commit***.
-
-Click the *Run Document* button to see if the data input panel appears.
-
-### User tweets renderPlot
-
-Continue to work in the `user` chunk and specify the plot as a time-series of the number of tweets over time. Since this user has fewer tweets, we can extend the time to months. 
-
-```
-{r user, echo=FALSE}
-inputPanel(
-  selectInput("tweetsource", label = "Source of tweets:",
-              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
-)
-
-renderPlot({
-  ts_plot(user_timeline %>% filter(source %in% input$tweetsource), by = "months", col = "blue") +
-    labs(x = NULL, y = NULL,
-       title = "Frequency of tweets from @RLadiesSeattle",
-       subtitle = paste0(format(min(user_timeline$created_at), "%d %B %Y"), " to ", format(max(user_timeline$created_at),"%d %B %Y")),
-       caption = "Data collected from IMDb's REST API via rtweet") + 
-    theme_minimal()
-})
-```
-The `renderPlot()` function will use the inputs to make a reacting set of graphs. Time-series plot function, `ts_plot`,  piping `%>%` and the `filter()` function will make it so only data from our selected tweet source is collected via `source` and the list of selected inputs `tweetsource`, which we specified in the `inputPanel`. Like before, 
-we can add features to make the plot  cleaner.
-
-Save the file, write a commit message and ***commit***.
-
-Click the *Run Document* button to see if the data plot appears.
-
-
-###  renderDataTable
-
-Next we provide a table full of details that can be easily filtered using our input or user actions for more information. To do this, we continue to add to the `user` chunk. 
-
-```
-{r user, echo=FALSE}
-inputPanel(
-  selectInput("tweetsource", label = "Source of tweets:",
-              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
-)
-
-renderPlot({
-  ts_plot(user_timeline %>% filter(source %in% input$tweetsource), by = "months", col = "blue") +
-    labs(x = NULL, y = NULL,
-       title = "Frequency of tweets from @RLadiesSeattle",
-       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
-       caption = "Data collected from IMDb's REST API via rtweet") + 
-    theme_minimal()
-})
-
-renderDataTable({
-  user_timeline %>% 
-    filter(source %in% input$tweetsource) %>% 
-    select(text, favorite_count, retweet_count, source) %>%
-    arrange(desc(retweet_count))
-})
-```
-
-Save the file, write a commit message and ***commit***.
-
-Click the *Run Document* button to see if the wordle appears.
 
 ## Congratulations
 
 Well done! You made an interactive data visualization using IMDb data! 
 We will discuss different ways to publish your work to the web but for now anyone who has your code can reproduce your visualizations!
+
+If you want to keep practicing, try to add additional inputs, build a second render plot or a render table in a different subheader.
 
 Look over your work, make sure you are ready to push your changes, and then use Git to ***Push*** to GitHub Classroom.
