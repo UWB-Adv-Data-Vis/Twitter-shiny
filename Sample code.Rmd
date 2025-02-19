@@ -1,0 +1,104 @@
+---
+title: "IMDb Shiny"
+author: "Caleb Trujillo"
+date: "`r Sys.Date()`"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, stringr)
+```
+
+```{r load data, include=FALSE}
+#title <- read_tsv('title.basics.tsv')
+#ratings <- read_tsv('title.ratings.tsv')
+load(".RData")
+
+# film <- title %>%
+#   merge(ratings) %>%
+#   filter(numVotes > 1000) %>%
+#   mutate(startYear = as.Date(as.character(startYear), 
+#                              format = "%Y"
+#                              ),
+#          endYear= as.Date(as.character(endYear), 
+#                           format = "%Y"
+#                           )
+#          )
+
+rm(ratings)
+rm(title)
+gc()
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately.
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs {.tabset}
+
+### header 2
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change. This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r type, echo=FALSE}
+inputPanel(
+  selectInput("filmtype", label = "Type of film:",
+              choices = unique(film$titleType),
+              selected = "movie",
+              multiple = TRUE),
+  sliderInput("daterange",
+              label = "Date range:",
+              min = 1890,
+              max = 2025,
+              value =
+                c(2019, 2025),
+          sep = "")
+  )
+
+renderPlot({
+  film %>%
+    filter(titleType %in% input$filmtype) %>%
+    filter(averageRating >=8 &
+             numVotes >=1000 &
+             startYear >=
+               as.Date(as.character(input$daterange[1]),format = "%Y") &
+             startYear <=
+               as.Date(as.character(input$daterange[2]),format = "%Y")
+           ) %>%
+    ggplot(aes(x = startYear, y = averageRating)) +
+    geom_point(aes(size = numVotes, color = titleType))+
+    geom_text(data = .%>% group_by(startYear) %>% slice_max(order_by = numVotes, n=3), 
+              mapping = aes(x= startYear, y = averageRating, label = originalTitle, size = numVotes), check_overlap = TRUE, position = position_dodge(0.9)
+              )+
+      labs(x = NULL, y = NULL,
+         title = "Ratings with an 8 or higher",
+         subtitle = paste0("Date range: ",
+                           input$daterange[1],
+                           " to ",
+                           input$daterange[2],"."
+                           ),
+         caption = "Source: IMDb") +
+    scale_x_date()+
+    scale_size_continuous(labels = scales::unit_format(
+      unit = "k", 
+      scale = 1e-3,
+      accuracy = 1, 
+      sep = ""
+      #round = 4
+      ), name = 'Votes') +
+    scale_color_discrete(name = 'Media') +
+      theme_minimal()+
+    theme(
+      legend.position = "top"
+    )
+})
+
+```
+
+
+
+### Description
+
+Add text to describe, what you accomplished and why it matters. 
