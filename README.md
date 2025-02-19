@@ -107,16 +107,20 @@ Create a new chunk under your replaced text called `{r load data, include = FALS
 
 Write commands to load the two data files using the `read_tsv()` commands that are stored as `titles` and `ratings` respectively.
 
-Next, merge these data sets and filter the sample to keep the films with more than 100 raters.
-Use the function merge, a convenient join function.
+Next, merge these data sets and filter the sample to keep the films with more than 1000 raters.
+Use the function `merge()`, a convenient join function, to combine the ratings and titles.
+Finally, to do some simple pre-processing, reformat the dates for all films.
+
 
 ```
 film <- title %>%
   merge(ratings) %>%
-  filter(numVotes > 100)
+  filter(numVotes > 100) %>%
+  mutate(startYear = as.Date(as.character(startYear), format = "%Y"),
+         endYear= as.Date(as.character(endYear), format = "%Y"))
 ```
 
-This will reduce the data set from 1.5 million entries to about 382,000.
+This will reduce the data set from 1.5 million entries to about 95,000.
 
 After successfully running the script to load the stored data, you should be able to see a `film` data table in the environment tab. 
 
@@ -181,11 +185,13 @@ We can also add some additional features to make the plot look cleaner and have 
 
 Continue to work in the `type` chunk and add code to render a plot so your code looks as follows:
 
-```
-````{r type, echo=FALSE}
+````
+```{r type, echo=FALSE}
 inputPanel(
   selectInput("filmtype", label = "Type of film:",
-              choices = unique(film$titleType), selected = "movie", multiple = TRUE)
+              choices = unique(film$titleType), 
+              selected = "movie", 
+              multiple = TRUE)
 )
 
 renderPlot({
@@ -194,15 +200,14 @@ renderPlot({
     ggplot(aes(x = startYear, y = averageRating, size = numVotes, color = titleType)) +
     geom_point()+
       labs(x = NULL, y = NULL,
-         title = "Ratings of `input$filmtype` with an 8 or higher",
-         subtitle = paste0("Movies: ",input$filmtype,"."),
+         title = "Ratings with an 8 or higher",
          caption = "Source: IMDb") + 
       theme_minimal()
 })
-````
 ```
+````
 
-
+Note that we can add R objects into the titles and subtitles so that they update as the user's inputs are added.
 
 Save the file, write a commit message and ***commit***.
 
@@ -214,15 +219,131 @@ Next, try to run the document using the *Run Document* button to see if you can 
 Lets repeat these same steps by adding a date input using a slider.
 This will help users by not overwhelming them too quickly.
 
-```dateRangeInput("range", label = "Date range:",
-                 start = 2010, min = min(film$startYear), max = (film$endYear), format = "yyyy", startview = "year")```
-                 
-                 
+```
+inputPanel(
+  selectInput(...),
+  sliderInput("daterange", 
+              label = "Date range:",
+              min = 1890, 
+              max = 2025,
+              value = 
+                c(2019, 2025),
+          sep = "")
+  )
+```            
+
+Notice that we can set the start of the slider at 2019-2025. 
+Notice this input has two values.
+For the slider tool, we can set the upper and lower limits based on the maximum and minimum years.
+After setting the range, we can call this input "datarange"" so that we can call it using `input$datarange`.
+
+Now, lets update the renderPlot function with the new filters that also behave like dates.
+
+````
+```{r type, echo=FALSE}
+inputPanel(...)
+
+renderPlot({
+  film %>%
+    filter(titleType %in% input$filmtype) %>%
+    filter(averageRating >=8 &
+             numVotes >=1000 &
+             startYear >=
+               as.Date(as.character(input$daterange[1]),format = "%Y") &
+             startYear <=
+               as.Date(as.character(input$daterange[2]),format = "%Y")
+           ) %>%
+    ggplot(aes(x = startYear, y = averageRating, size = numVotes, color = titleType)) +
+    geom_point()+
+      labs(
+         title = "Ratings with an 8 or higher",
+         caption = "Source: IMDb") + 
+      theme_minimal()
+})
+```
+````
+
+Now that the dashboard is interactive and functional for the time slider, lets make a checkpoint to return back to as we go deeper.
+
+Save the file, write a commit message and ***commit***.
+
+
+### Stylistic touches
+
+Notice that the dashboard will update as we change user selected dates and film types.
+However, The dashboard is not very pleasing to look at.
+Lets imagine what we could add. 
+Clear labels, a descriptive subtitle, clear units in the legend, and removing distracting labels could help clarify the graph.
+
+Continue to work in the `type` chunk and add code to work on the deeper layers of ggplot so your code looks as follows:
+
+````
+```{r type, echo=FALSE}
+inputPanel(...)
+
+renderPlot({
+  film %>%
+    filter(...) %>%
+    filter(...) %>%
+    ggplot(...) +
+    geom_point()+
+      labs(x = NULL, y = NULL,
+         title = "Ratings with an 8 or higher",
+         subtitle = paste0("Date range: ",
+                           input$daterange[1],
+                           " to ",
+                           input$daterange[2],"."
+                           ),
+         caption = "Source: IMDb") +
+    scale_x_date()+
+    scale_size_continuous(labels = scales::unit_format(
+      unit = "k", 
+      scale = 1e-3,
+      accuracy = 1, 
+      sep = ""
+      #round = 4
+      ), name = 'Votes') +
+    scale_color_discrete(name = 'Media') +
+      theme_minimal()+
+    theme(
+      legend.position = "top"
+    )
+})
+```
+````
+
+Adjusting the labels, scales, and theme layers of ggplot allow for a fluid look.
+
+Finally, lets add some labels for the top most films each year.
+To do so, we need to remap the aesthetics layer.
+
+```
+  film %>%
+    filter(...) %>%
+    filter(...) %>%
+    ggplot(aes(x = startYear, y = averageRating)) +
+      geom_point(aes(size = numVotes, color = titleType))+
+      geom_text(data = .%>% group_by(startYear) %>% slice_max(order_by = numVotes, n=3), 
+                mapping = aes(x= startYear, y = averageRating, label = originalTitle, size = numVotes), check_overlap = TRUE, position = position_dodge(0.9)
+              )+...
+```
+
+This will provide a unique approach to splice to label the most popular films.
+Instead of using `numVotes`, this could easily be adapted to the `averageRating`.
+Notice that when the user replaces movies with video games in the selection, the labels contain video games.
+
+
+Save the file, write a commit message and ***commit***.
+
+##  Ratings by genre
+
+Continue working under the header `### Ratings by genre`.
+
 
 
 ### renderDataTable
 
-Continue to work in the `tweets` chunk and add code to render a data table so your code looks as follows:
+Continue to work in the chunk and add code to render a data table so your code looks as follows:
 
 ```
 {r tweets, echo=FALSE}
@@ -236,7 +357,7 @@ renderPlot({
     labs(x = NULL, y = NULL,
        title = "Frequency of tweets containing #Rstats",
        subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
-       caption = "Data collected from IMDb's REST API via rtweet") + 
+       caption = "Data collected from IMDb") + 
     theme_minimal()
 })
 
@@ -253,7 +374,7 @@ Save the file, write a commit message and ***commit***.
 
 Next, try to run the document with the *Run Document* button to see if you can use the input to alter the table to different languages.
 
-## Tweets from @RLadiesSeattle
+## Tweets from
 
 Next we will go to the next sub-header to create a new tab for us to build a data table:
 
@@ -270,18 +391,19 @@ Then, add a sub-header:
 
 `#### Time series plot of tweets`
 
-Here we will add another chunk which we will call `user` with echo set to false, `{r user, echo=FALSE}`.
+Here we will add another chunk which we will call `genres` with echo set to false, `{r genres, echo=FALSE}`.
 
-For the user, we will have multiple data displays, but will gather one input for the sake of creating interactive plots.
+For the user, we will display genres to select and will gather one input for the sake of creating interactive plots.
 
 ### Device inputPanel
 
-In the user chunk, collect information using an `inputPanel` from the user with another multiple-select option. Instead of language, we will use the source of the tweet so we can see what device was used to write it. 
+In the genres chunk, collect information using an `inputPanel` from the user with a select option. Instead of media by `titleType`, we will use `genres` column. 
 ```
 {r user, echo=FALSE}
 inputPanel(
-  selectInput("tweetsource", label = "Source of tweets:",
-              choices = unique(user_timeline$source), selected = unique(user_timeline$source), multiple = TRUE)
+  selectInput("genre", label = ":",
+              choices = unique(unlist(str_split(film$genres,","))), 
+              selected = "Horror", multiple = FALSE)
 )
 ```
 Like before, we have choices available based on what is present in the data set, and as a default, we will visualize all select sources with the ability of the user to select multiple and storing these as a variable `input$tweetsource` so that we can retrieve this for the plots below. 
@@ -318,7 +440,7 @@ Save the file, write a commit message and ***commit***.
 Click the *Run Document* button to see if the data plot appears.
 
 
-### User tweets renderDataTable
+###  renderDataTable
 
 Next we provide a table full of details that can be easily filtered using our input or user actions for more information. To do this, we continue to add to the `user` chunk. 
 
@@ -346,51 +468,13 @@ renderDataTable({
 })
 ```
 
-Notice that this time we use the `user_timeline` data, use piping to filter to the input-selected sources, then select a few of the needed columns from the full data table, and then arrange these by the number of retweets in descending order.
-
-Save the file, write a commit message and ***commit***.
-
-Click the *Run Document* button to see if the data table of tweets appears.
-
-
-### Wordle
-
-A wordle is one visualization that is often used as a novelty but can be great for summarizing impressions.
-We will make a world that will help summarize the tweets. 
-
-Start by adding a sub-header to distinguish the section, `#### Wordle: A graphic of frequently used words`.
-
-Next, create a chunk called `userwordle` and add a `renderPlot()` function.
-
-```
-{r userwordle , echo=FALSE}
-renderPlot({
- words <- user_timeline %>%
-  mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
-         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
-  unnest_tokens(word, text) %>%
-  filter(!word %in% stop_words$word,
-         !word %in% str_remove_all(stop_words$word, "'"),
-         str_detect(word, "[a-z]"),
-         !str_detect(word, "^#"),         
-         !str_detect(word, "@\\S+")) %>%
-  filter(source %in% input$tweetsource) %>%
-  count(word, sort = TRUE)
-
-words %>% 
-  with(wordcloud(word, n, random.order = FALSE, max.words = 100, colors = "#F29545")) 
-})
-```
-
-This set of code is beyond the scope of what we are learning in data visualization, but it uses regular expressions, *regex*, to extract words that can be standardized for counting without pesky username handles or hashtags that might alter our count. Notice we still have a filter function that uses `input$tweetsource` to make the information reactive. Once the word data is stored as an object `words` it can be called up as a wordle using the `wordcloud()` function.
-
 Save the file, write a commit message and ***commit***.
 
 Click the *Run Document* button to see if the wordle appears.
 
 ## Congratulations
 
-Well done! You made an interactive data visualization using IMDb data! We will discuss different ways to publish your work to the web but for now anyone who has your code can reproduce your visualizations!
+Well done! You made an interactive data visualization using IMDb data! 
+We will discuss different ways to publish your work to the web but for now anyone who has your code can reproduce your visualizations!
 
 Look over your work, make sure you are ready to push your changes, and then use Git to ***Push*** to GitHub Classroom.
