@@ -105,7 +105,13 @@ Save the file, write a commit message and ***commit***.
 
 Create a new chunk under your replaced text called `{r load data, include = FALSE}`
 
-Write commands to load the two data files using the `read_tsv()` commands that are stored as `titles` and `ratings` respectively.
+Write commands to load the two data files using the `read_tsv()` commands that are stored as `title` and `ratings` respectively.
+
+In the console:
+
+- `title <- read_tsv('title.basics.tsv')`
+
+- `ratings <- read_tsv('title.ratings.tsv')`
 
 Next, merge these data sets and filter the sample to keep the films with more than 1000 raters.
 Use the function `merge()`, a convenient join function, to combine the ratings and titles.
